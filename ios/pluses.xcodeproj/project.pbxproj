@@ -1391,6 +1391,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.jkorona.pluses;
 				PRODUCT_NAME = pluses;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1413,6 +1414,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.jkorona.pluses;
 				PRODUCT_NAME = pluses;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
