@@ -12,7 +12,7 @@ import CONFIG from '../config';
 export default class LoginScreen extends Component {
 
 	componentWillMount() {
-		this.configureGoogle(CONFIG.googleClientId)
+		this.configureGoogle(CONFIG.google.clientId)
 	}
 
 	configureGoogle(clientId) {

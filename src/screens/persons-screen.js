@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import {
 	StyleSheet,
-	Text,
-	View
+	View,
+	ListView
 } from 'react-native';
+import * as firebase from 'firebase';
+
+import ListItem from '../components/list-item';
+
+import CONFIG from '../config';
+
+const firebaseApp = firebase.initializeApp(CONFIG.firebase);
 
 export default class PersonsScreen extends Component {
 
@@ -12,10 +19,48 @@ export default class PersonsScreen extends Component {
 		headerLeft: null
 	};
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			dataSource: new ListView.DataSource({
+				rowHasChanged: (row1, row2) => row1 !== row2,
+			})
+		};
+		this.itemsRef = firebaseApp.database().ref();
+	}
+
+	componentDidMount() {
+		this._listenForItems(this.itemsRef);
+	}
+
+	_listenForItems(itemsRef) {
+		itemsRef.on('value', (snap) => {
+			var items = [];
+			snap.forEach((child) => {
+				items.push({
+					title: child.val().title,
+					_key: child.key
+				});
+			});
+
+			this.setState({
+				dataSource: this.state.dataSource.cloneWithRows(items)
+			});
+		});
+	}
+
+	_renderItem(item) {
+		const onPress = () => { };
+
+		return (
+			<ListItem item={item} onPress={onPress} />
+		);
+	}
+
 	render() {
 		return (
 			<View style={styles.container}>
-				<Text>Hello World</Text>
+				<ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
 			</View>
 		);
 	}
@@ -24,8 +69,9 @@ export default class PersonsScreen extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 		backgroundColor: 'steelblue',
+	},
+	listview: {
+		flex: 1,
 	}
 });
