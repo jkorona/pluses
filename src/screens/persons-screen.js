@@ -2,16 +2,28 @@ import React, { Component } from 'react';
 import {
 	StyleSheet,
 	View,
-	ListView
+	ListView,
+	Button,
+	AlertIOS
 } from 'react-native';
 
 import ListItem from '../components/list-item';
+import ImageButton from '../components/image-button';
 
 export default class PersonsScreen extends Component {
 
-	static navigationOptions = {
-		title: 'Persons',
-		headerLeft: null
+	static navigationOptions = ({ navigation, screenProps }) => {
+		const { user } = navigation.state.params;
+
+		return {
+			title: 'Persons',
+			headerLeft: null,
+			headerRight: (
+				<ImageButton source={require('./settings-icon.png')}
+					onPress={() => navigation.navigate('Settings', { user })}
+				/>
+			)
+		}
 	};
 
 	constructor(props) {
@@ -24,7 +36,7 @@ export default class PersonsScreen extends Component {
 
 		const { state } = this.props.navigation;
 		const { firebaseConnection } = state.params;
-		
+
 		this.itemsRef = firebaseConnection.database().ref();
 	}
 

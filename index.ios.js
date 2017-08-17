@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 
 import LoginScreen from './src/screens/login-screen';
 import PersonsScreen from './src/screens/persons-screen';
+import SettingsScreen from './src/screens/settings-screen';
 
 import CONFIG from './src/config';
 
@@ -17,6 +18,9 @@ const routes = {
   },
   Persons: {
     screen: PersonsScreen,
+  },
+  Settings: {
+    screen: SettingsScreen,
   },
 };
 

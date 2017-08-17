@@ -36,7 +36,7 @@ export default class LoginScreen extends Component {
 
 		var credential = firebase.auth.GoogleAuthProvider.credential(user.idToken);
 		firebaseConnection.auth().signInWithCredential(credential)
-			.then(() => this.props.navigation.navigate('Persons', { firebaseConnection }))
+			.then(() => this.props.navigation.navigate('Persons', { firebaseConnection, user }))
 			.catch(this.whenErrorOcurred);
 	}
 
