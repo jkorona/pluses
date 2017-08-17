@@ -27,7 +27,7 @@ export default class LoginScreen extends Component {
 	}
 
 	whenSignedIn(user) {
-		AlertIOS.alert("User logged in", user.name);
+		this.props.navigation.navigate('Persons');
 	}
 
 	render() {
