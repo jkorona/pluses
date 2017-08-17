@@ -2,44 +2,52 @@ import React, { Component } from 'react';
 import {
 	StyleSheet,
 	Text,
-	View
+	View,
+	AlertIOS
 } from 'react-native';
 
+import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
+
+import CONFIG from '../config';
+
 export default class LoginScreen extends Component {
+
+	componentWillMount() {
+		this.configureGoogle(CONFIG.googleClientId)
+	}
+
+	configureGoogle(clientId) {
+		GoogleSignin.configure({ iosClientId: clientId })
+			.then(() => GoogleSignin.currentUserAsync())
+			.then(user => user && this.whenSignedIn(user));
+	}
+
+	signIn() {
+		GoogleSignin.signIn().then(this.whenSignedIn.bind(this));
+	}
+
+	whenSignedIn(user) {
+		AlertIOS.alert("User logged in", user.name);
+	}
 
 	render() {
 		return (
 			<View style={styles.container}>
-				<Text style={styles.welcome}>
-					Welcome to React Native!
-				</Text>
-				<Text style={styles.instructions}>
-					To get started, edit index.ios.js
-				</Text>
-				<Text style={styles.instructions}>
-					Press Cmd+R to reload,{'\n'}
-					Cmd+D or shake for dev menu
-				</Text>
+				<GoogleSigninButton
+					style={{ width: 312, height: 48 }}
+					size={GoogleSigninButton.Size.Wide}
+					color={GoogleSigninButton.Color.Dark}
+					onPress={() => this.signIn()} />
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'steelblue',
+	}
 });
