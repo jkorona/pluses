@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import {
 	StyleSheet,
 	Text,
-	View,
-	AlertIOS
+	View
 } from 'react-native';
 
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';

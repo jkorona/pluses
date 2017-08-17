@@ -5,8 +5,6 @@ import {
 	View
 } from 'react-native';
 
-import CONFIG from '../config';
-
 export default class PersonsScreen extends Component {
 
 	static navigationOptions = {
