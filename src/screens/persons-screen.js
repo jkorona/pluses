@@ -4,13 +4,8 @@ import {
 	View,
 	ListView
 } from 'react-native';
-import * as firebase from 'firebase';
 
 import ListItem from '../components/list-item';
-
-import CONFIG from '../config';
-
-const firebaseApp = firebase.initializeApp(CONFIG.firebase);
 
 export default class PersonsScreen extends Component {
 
@@ -26,7 +21,11 @@ export default class PersonsScreen extends Component {
 				rowHasChanged: (row1, row2) => row1 !== row2,
 			})
 		};
-		this.itemsRef = firebaseApp.database().ref();
+
+		const { state } = this.props.navigation;
+		const { firebaseConnection } = state.params;
+		
+		this.itemsRef = firebaseConnection.database().ref();
 	}
 
 	componentDidMount() {

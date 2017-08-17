@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import {
 	StyleSheet,
 	Text,
-	View
+	View,
+	AlertIOS
 } from 'react-native';
 
+import * as firebase from 'firebase';
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
 
 import CONFIG from '../config';
@@ -18,15 +20,28 @@ export default class LoginScreen extends Component {
 	configureGoogle(clientId) {
 		GoogleSignin.configure({ iosClientId: clientId })
 			.then(() => GoogleSignin.currentUserAsync())
-			.then(user => user && this.whenSignedIn(user));
+			.then(user => user && this.whenSignedIn(user))
+			.catch(this.whenErrorOcurred);
 	}
 
 	signIn() {
-		GoogleSignin.signIn().then(this.whenSignedIn.bind(this));
+		GoogleSignin.signIn()
+		.then(this.whenSignedIn.bind(this))
+		.catch(this.whenErrorOcurred);
 	}
 
 	whenSignedIn(user) {
-		this.props.navigation.navigate('Persons');
+		const { state } = this.props.navigation;
+		const { firebaseConnection } = state.params;
+
+		var credential = firebase.auth.GoogleAuthProvider.credential(user.idToken);
+		firebaseConnection.auth().signInWithCredential(credential)
+			.then(() => this.props.navigation.navigate('Persons', { firebaseConnection }))
+			.catch(this.whenErrorOcurred);
+	}
+
+	whenErrorOcurred(error) {
+		AlertIOS.alert('Error', `Encoutered following error: ${error.message}`);
 	}
 
 	render() {
