@@ -3,7 +3,8 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	AlertIOS
+	AlertIOS,
+	ActivityIndicator
 } from 'react-native';
 
 import * as firebase from 'firebase';
@@ -15,27 +16,36 @@ export default class LoginScreen extends Component {
 
 	componentWillMount() {
 		this.configureGoogle(CONFIG.google.clientId)
+		this.state = {
+			isLoading: false,
+		}
 	}
 
 	configureGoogle(clientId) {
+		const stopLoading = () => this.setState({ isLoading: false });
+
+		this.setState({ isLoading: true });
 		GoogleSignin.configure({ iosClientId: clientId })
 			.then(() => GoogleSignin.currentUserAsync())
 			.then(user => user && this.whenSignedIn(user))
-			.catch(this.whenErrorOcurred);
+			.catch(this.whenErrorOcurred)
+			.then(stopLoading, stopLoading);
 	}
 
 	signIn() {
 		GoogleSignin.signIn()
-		.then(this.whenSignedIn.bind(this))
-		.catch(this.whenErrorOcurred);
+			.then(this.whenSignedIn.bind(this))
+			.catch(this.whenErrorOcurred);
 	}
 
 	whenSignedIn(user) {
 		const { state } = this.props.navigation;
 		const { firebaseConnection } = state.params;
 
+		this.setState({ user });
+
 		var credential = firebase.auth.GoogleAuthProvider.credential(user.idToken);
-		firebaseConnection.auth().signInWithCredential(credential)
+		return firebaseConnection.auth().signInWithCredential(credential)
 			.then(() => this.props.navigation.navigate('Persons', { firebaseConnection, user }))
 			.catch(this.whenErrorOcurred);
 	}
@@ -45,13 +55,22 @@ export default class LoginScreen extends Component {
 	}
 
 	render() {
+		const { user, isLoading } = this.state;
 		return (
 			<View style={styles.container}>
-				<GoogleSigninButton
-					style={{ width: 312, height: 48 }}
-					size={GoogleSigninButton.Size.Wide}
-					color={GoogleSigninButton.Color.Dark}
-					onPress={() => this.signIn()} />
+				{
+					isLoading || user ?
+						(
+							<ActivityIndicator animating={isLoading} size="large" />
+						) :
+						(
+							<GoogleSigninButton
+								style={{ width: 312, height: 48 }}
+								size={GoogleSigninButton.Size.Wide}
+								color={GoogleSigninButton.Color.Dark}
+								onPress={() => this.signIn()} />
+						)
+				}
 			</View>
 		);
 	}
