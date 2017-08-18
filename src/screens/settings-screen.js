@@ -31,8 +31,7 @@ export default class SettingsScreen extends Component {
 	}
 
 	render() {
-		const { state } = this.props.navigation;
-		const { user } = state.params;
+		const user = GoogleSignin.currentUser();
 
 		return (
 			<View style={styles.container}>

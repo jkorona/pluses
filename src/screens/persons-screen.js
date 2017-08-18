@@ -7,21 +7,21 @@ import {
 	AlertIOS
 } from 'react-native';
 
+import FirebaseManager from '../utils/firebase-manager';
+
 import ListItem from '../components/list-item';
 import ImageButton from '../components/image-button';
 
 export default class PersonsScreen extends Component {
 
 	static navigationOptions = ({ navigation, screenProps }) => {
-		const { user } = navigation.state.params;
-
 		return {
 			title: 'Persons',
 			headerLeft: null,
 			headerRight: (
-				<ImageButton source={require('./settings-icon.png')}
-					onPress={() => navigation.navigate('Settings', { user })}
-				/>
+				<ImageButton
+					source={require('./settings-icon.png')}
+					onPress={() => navigation.navigate('Settings')} />
 			)
 		}
 	};
@@ -34,10 +34,7 @@ export default class PersonsScreen extends Component {
 			})
 		};
 
-		const { state } = this.props.navigation;
-		const { firebaseConnection } = state.params;
-
-		this.itemsRef = firebaseConnection.database().ref();
+		this.itemsRef = FirebaseManager.instance().db().ref();
 	}
 
 	componentDidMount() {
@@ -71,7 +68,10 @@ export default class PersonsScreen extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
+				<ListView
+					dataSource={this.state.dataSource}
+					renderRow={this._renderItem.bind(this)}
+					style={styles.listview} />
 			</View>
 		);
 	}

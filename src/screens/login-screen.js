@@ -5,10 +5,9 @@ import {
 	View,
 	AlertIOS
 } from 'react-native';
-
-import * as firebase from 'firebase';
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
 
+import FirebaseManager from '../utils/firebase-manager';
 import CONFIG from '../config';
 
 export default class LoginScreen extends Component {
@@ -26,17 +25,15 @@ export default class LoginScreen extends Component {
 
 	signIn() {
 		GoogleSignin.signIn()
-		.then(this.whenSignedIn.bind(this))
-		.catch(this.whenErrorOcurred);
+			.then(this.whenSignedIn.bind(this))
+			.catch(this.whenErrorOcurred);
 	}
 
 	whenSignedIn(user) {
-		const { state } = this.props.navigation;
-		const { firebaseConnection } = state.params;
+		const { navigate } = this.props.navigation;
 
-		var credential = firebase.auth.GoogleAuthProvider.credential(user.idToken);
-		firebaseConnection.auth().signInWithCredential(credential)
-			.then(() => this.props.navigation.navigate('Persons', { firebaseConnection, user }))
+		FirebaseManager.instance().authenticate(user.idToken)
+			.then(() => navigate('Persons'))
 			.catch(this.whenErrorOcurred);
 	}
 
