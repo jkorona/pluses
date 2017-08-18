@@ -54,10 +54,12 @@ export default class LoginScreen extends Component {
 		const { user, isLoading } = this.state;
 		return (
 			<View style={styles.container}>
+				<Text>Welcome in</Text>
+				<Text style={styles.appName}>Pluses</Text>
 				{
 					isLoading || user ?
 						(
-							<ActivityIndicator animating={isLoading} size="large" />
+							<ActivityIndicator size="large" />
 						) :
 						(
 							<GoogleSigninButton
@@ -78,5 +80,11 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'steelblue',
+	},
+	appName: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		paddingTop: 10,
+		paddingBottom: 30
 	}
 });
