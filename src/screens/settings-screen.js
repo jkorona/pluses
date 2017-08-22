@@ -5,12 +5,22 @@ import {
 	ListView,
 	Text,
 	Button,
-	AlertIOS
+	AlertIOS,
+	Image,
+	Picker
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import { GoogleSignin } from 'react-native-google-signin';
 
+import { FormGroup, Select } from '../components';
+
 export default class SettingsScreen extends Component {
+
+	constructor(props) {
+		super(props);
+
+		this.state = { language: 'java' };
+	}
 
 	static navigationOptions = {
 		title: 'Settings'
@@ -35,10 +45,31 @@ export default class SettingsScreen extends Component {
 
 		return (
 			<View style={styles.container}>
-				<View style={styles.innerContainer}>
-					<Text>You are logged in as {user.name}</Text>
+				<View style={styles.avatar}>
+					<Image source={{ uri: user.photo }}
+						style={{ width: 100, height: 100, borderRadius: 50 }} />
 				</View>
-				<Button title="Logout" onPress={() => this.signOut()} color="#000000" />
+				<FormGroup label="First Name">
+					<Text style={styles.text}>{user.givenName}</Text>
+				</FormGroup>
+				<FormGroup label="Last Name">
+					<Text style={styles.text}>{user.familyName}</Text>
+				</FormGroup>
+				<FormGroup label="Email">
+					<Text style={styles.text}>{user.email}</Text>
+				</FormGroup>
+				<Select
+					label="select"
+					prompt="dddddupa"
+					selectedValue={this.state.language}
+					onValueChange={(newValue) => this.setState({ language: newValue })}
+					dataSource={[
+						{ label: 'Foo', value: 'foo' },
+						{ label: 'Bar', value: 'bar' },
+						{ label: 'Baz', value: 'baz' }
+					]}
+				>
+				</Select>
 			</View>
 		);
 	}
@@ -46,14 +77,11 @@ export default class SettingsScreen extends Component {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
 		backgroundColor: 'steelblue',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		flex: 1
 	},
-	innerContainer: {
-		flex: 1,
+	avatar: {
 		alignItems: 'center',
-		justifyContent: 'center',
+		margin: 20
 	}
 });
