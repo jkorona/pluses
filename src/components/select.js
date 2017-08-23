@@ -20,7 +20,9 @@ class Select extends Component {
 			<View style={styles.select}>
 				<FormGroup label={this.props.label}>
 					<TouchableOpacity style={styles.button} onPress={() => this.setListVisible(!this.state.listVisible)}>
-						<Text>{this.props.selectedValue || this.props.prompt}</Text>
+						<Text style={!this.props.selectedValue ? styles.prompt : null}>
+							{this.props.selectedValue || this.props.prompt}
+						</Text>
 					</TouchableOpacity>
 				</FormGroup>
 				{this.state.listVisible && (
@@ -44,6 +46,10 @@ const styles = StyleSheet.create({
 	},
 	list: {
 		backgroundColor: 'powderblue'
+	},
+	prompt: {
+		fontSize: 17,
+		color: '#3B6A95'
 	}
 });
 

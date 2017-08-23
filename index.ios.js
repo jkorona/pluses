@@ -5,6 +5,7 @@ import { StackNavigator } from 'react-navigation';
 import LoginScreen from './src/screens/login-screen';
 import PersonsScreen from './src/screens/persons-screen';
 import SettingsScreen from './src/screens/settings-screen';
+import ScoresheetsScreen from './src/screens/scoresheets-screen';
 
 const routes = {
   Login: {
@@ -16,6 +17,9 @@ const routes = {
   Settings: {
     screen: SettingsScreen,
   },
+  Scoresheets: {
+    screen: ScoresheetsScreen
+  }
 };
 
 const PlusesApp = StackNavigator(routes);

@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import {
 	StyleSheet,
 	View,
-	ListView,
 	Text,
 	Button,
-	AlertIOS,
 	Image,
-	Picker
+	TouchableOpacity
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import { GoogleSignin } from 'react-native-google-signin';
@@ -58,18 +56,11 @@ export default class SettingsScreen extends Component {
 				<FormGroup label="Email">
 					<Text style={styles.text}>{user.email}</Text>
 				</FormGroup>
-				<Select
-					label="select"
-					prompt="dddddupa"
-					selectedValue={this.state.language}
-					onValueChange={(newValue) => this.setState({ language: newValue })}
-					dataSource={[
-						{ label: 'Foo', value: 'foo' },
-						{ label: 'Bar', value: 'bar' },
-						{ label: 'Baz', value: 'baz' }
-					]}
-				>
-				</Select>
+				<FormGroup label="Scoresheet">
+					<TouchableOpacity onPress={() => this.props.navigation.navigate('Scoresheets')}>
+						<Text>Test</Text>
+					</TouchableOpacity>
+				</FormGroup>
 			</View>
 		);
 	}
