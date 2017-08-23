@@ -16,6 +16,14 @@ class FirebaseManager {
 		return this.firebaseConnection.database();
 	}
 
+	query(path, key) {
+		return this.db().ref(`${path}/${key}`).once('value').then(snapshot => snapshot.val());
+	}
+
+	save(path, key, value) {
+		return this.db().ref(`${path}/${key}`).set(value);
+	}
+
 }
 
 export default {
