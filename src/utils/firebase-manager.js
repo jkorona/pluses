@@ -20,8 +20,16 @@ class FirebaseManager {
 		return this.db().ref(`${path}/${key}`).once('value').then(snapshot => snapshot.val());
 	}
 
+	add(path, value) {
+		return this.db().ref(path).push(value);
+	}
+
 	save(path, key, value) {
 		return this.db().ref(`${path}/${key}`).set(value);
+	}
+
+	update(path, key, value) {
+		return this.db().ref(path).update({ [key]: value });
 	}
 
 }

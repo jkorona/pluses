@@ -1,12 +1,17 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
-import { Text, TextInput, View, Switch, StyleSheet } from 'react-native';
+import { Text, TextInput, View, Switch, StyleSheet, Button, Alert } from 'react-native';
 
 import { SwitchesGroup, Select, FormGroup, FormHeader } from '../components';
+import { ActionButton } from '../components';
+
+import FirebaseManager from '../utils/firebase-manager';
 
 class ScoresheetScreen extends Component {
 
   static navigationOptions = {
-    title: 'Scoresheets'
+    title: 'Scoresheets',
+    errorMessage: ''
   };
 
   state = {
@@ -36,6 +41,7 @@ class ScoresheetScreen extends Component {
           <TextInput
             autoFocus={true}
             placeholder="Enter name of Scoresheet"
+            onChangeText={(newValue) => this.setState({ scoresheetName: newValue })}
           >
           </TextInput>
         </FormGroup>
@@ -62,10 +68,36 @@ class ScoresheetScreen extends Component {
     )
   }
 
+  isValid() {
+    const result = !_.isEmpty(this.state.scoresheetName)
+    this.setState({
+      ...this.state,
+      errorMessage: result ? '' : 'You have to select current scoresheet.'
+    });
+
+    return result;
+  }
+
+  async saveScoresheet() {
+    if (this.isValid()) {
+      const db = FirebaseManager.instance();
+      const params = _.get(this.props, 'navigation.state.params');
+
+      if (this.state.mode === 'new') {
+        await db.add('scoresheets', { name: this.state.scoresheetName });
+      }
+
+      await db.update('users', `${params.userId}/currentScoresheet`, this.state.scoresheetName)
+
+      params.onScoresheetChange(this.state.scoresheetName);
+      this.props.navigation.goBack();
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <FormHeader text="Select how you'd like enter Scoresheet"/>
+        <FormHeader text="Please decide whether you'd like to create new Scoresheet or select on of already existing." />
         <SwitchesGroup
           selectedValue={this.state.mode}
           onValueChange={(mode) => this.setState({ mode })}
@@ -74,8 +106,17 @@ class ScoresheetScreen extends Component {
             { label: 'Select existing Scoresheet', value: 'existing' }
           ]}>
         </SwitchesGroup>
-        <FormHeader text="Scoresheet details"/>
+        <FormHeader text="Scoresheet details" />
         {this.renderScoresheetEditor(this.state.mode)}
+        {!!this.state.errorMessage && (
+          <Text style={styles.errorMessage}>{this.state.errorMessage}</Text> 
+        )}
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <ActionButton
+            title="Save"
+            image={require('../img/success-icon.png')}
+            onPress={() => this.saveScoresheet()} />
+        </View>
       </View>
     );
   }
@@ -85,6 +126,11 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'steelblue',
     flex: 1
+  },
+  errorMessage: {
+    padding: 10,
+    fontSize: 16,
+    color: 'red'
   }
 });
 

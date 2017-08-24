@@ -77,7 +77,10 @@ export default class SettingsScreen extends Component {
 				</FormGroup>
 				<FormGroup label="Scoresheet">
 					<TouchableOpacity onPress={() =>
-						this.props.navigation.navigate('Scoresheets')}>
+						this.props.navigation.navigate('Scoresheets', { 
+							userId: googleUser.id,
+							onScoresheetChange: (currentScoresheet) => this.updateUser({ currentScoresheet })
+						})}>
 						<Text>
 							{_.get(this.state, 'user.currentScoresheet') || 'Please add Scoresheet'}
 						</Text>

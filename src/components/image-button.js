@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import ReactNative from 'react-native';
-const { View, TouchableHighlight, Image, StyleSheet } = ReactNative;
+const { View, TouchableOpacity, Image, StyleSheet } = ReactNative;
 
 class ImageButton extends Component {
 	render() {
 		return (
-			<TouchableHighlight onPress={this.props.onPress} style={styles.button}
-				underlayColor="transparent">
+			<TouchableOpacity onPress={this.props.onPress} 
+				style={styles.button}>
 				<Image
 					style={styles.image}
 					source={this.props.source}
 				/>
-			</TouchableHighlight>
+			</TouchableOpacity>
 		);
 	}
 }

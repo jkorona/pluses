@@ -19,7 +19,8 @@ export default class PersonsScreen extends Component {
 			title: 'Persons',
 			headerLeft: null,
 			headerRight: (
-				<ImageButton source={require('../img/settings-icon.png')}
+				<ImageButton
+					source={require('../img/settings-icon.png')}
 					onPress={() => navigation.navigate('Settings')}
 				/>
 			)
