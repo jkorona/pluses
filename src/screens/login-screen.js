@@ -42,7 +42,8 @@ export default class LoginScreen extends Component {
 
 		this.setState({ user });
 		FirebaseManager.instance().authenticate(user.idToken)
-			.then(() => navigate('Persons'))
+			.then(() => FirebaseManager.instance().query('users').byId(user.id))
+			.then((user) => user ? navigate('Persons') : navigate('Settings', { registration: true, valid: false }))
 			.catch(this.whenErrorOcurred);
 	}
 
