@@ -24,7 +24,6 @@ export default class SettingsScreen extends Component {
 		const params = _.get(navigation, 'state.params', {});
 		let headerRight;
 
-
 		if (params.registration) {
 			headerRight = (
 				<Button

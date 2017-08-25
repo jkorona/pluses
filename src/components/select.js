@@ -16,7 +16,8 @@ class Select extends Component {
 	}
 
 	labelForValue(selectedValue) {
-		return this.props.dataSource.find(({ value }) => value === selectedValue).label;
+		const selectedItem = this.props.dataSource.find(({ value }) => value === selectedValue);
+		return selectedItem ? selectedItem.label : '';
 	}
 
 	render() {
