@@ -14,9 +14,26 @@ class ScoresheetScreen extends Component {
     errorMessage: ''
   };
 
+  db = FirebaseManager.instance();
+
   state = {
     mode: 'new',
+    scoresheets: [],
     scoresheetName: null
+  };
+
+  componentWillMount() {
+    const scoresheetName = _.get(this.props, 'navigation.state.params.scoresheetName');
+
+    this.db.query('scoresheets').asList()
+      .then((list) => {
+        this.setState({
+          ...this.state,
+          scoresheets: list.map(item => ({ value: item.$id, label: item.name })),
+          scoresheetName,
+          mode: scoresheetName ? 'existing' : 'new'
+        });
+      });
   }
 
   renderScoresheetEditor(mode) {
@@ -40,6 +57,7 @@ class ScoresheetScreen extends Component {
         <FormGroup label="Scoresheet Name">
           <TextInput
             autoFocus={true}
+            autoCapitalize="none"
             placeholder="Enter name of Scoresheet"
             onChangeText={(newValue) => this.setState({ scoresheetName: newValue })}
           >
@@ -57,11 +75,7 @@ class ScoresheetScreen extends Component {
           prompt="Select name of Scoresheet"
           selectedValue={this.state.scoresheetName}
           onValueChange={(newValue) => this.setState({ scoresheetName: newValue })}
-          dataSource={[
-            { label: 'Foo', value: 'foo' },
-            { label: 'Bar', value: 'bar' },
-            { label: 'Baz', value: 'baz' }
-          ]}
+          dataSource={this.state.scoresheets}
         >
         </Select>
       </View>
@@ -69,27 +83,38 @@ class ScoresheetScreen extends Component {
   }
 
   isValid() {
-    const result = !_.isEmpty(this.state.scoresheetName)
-    this.setState({
-      ...this.state,
-      errorMessage: result ? '' : 'You have to select current scoresheet.'
-    });
+    const value = this.state.scoresheetName;
+
+    let result = !_.isEmpty(value)
+    let errorMessage = '';
+
+    if (!result) {
+      errorMessage = 'You have to select current scoresheet.';
+    } else if (this.state.mode === 'new') {
+      result = !_.find(this.state.scoresheets, { value });
+      if (!result) errorMessage = 'Name already taken, please choose different.';
+    }
+
+    this.setState({ ...this.state, errorMessage });
 
     return result;
   }
 
   async saveScoresheet() {
     if (this.isValid()) {
-      const db = FirebaseManager.instance();
       const params = _.get(this.props, 'navigation.state.params');
+      const scoresheetName = this.state.scoresheetName;
 
       if (this.state.mode === 'new') {
-        await db.add('scoresheets', { name: this.state.scoresheetName });
+        await this.db.save('scoresheets', scoresheetName, {
+          name: scoresheetName,
+          owner: params.userId
+        });
       }
 
-      await db.update('users', `${params.userId}/currentScoresheet`, this.state.scoresheetName)
+      await this.db.update('users', `${params.userId}/currentScoresheet`, scoresheetName)
 
-      params.onScoresheetChange(this.state.scoresheetName);
+      params.onScoresheetChange(scoresheetName);
       this.props.navigation.goBack();
     }
   }
@@ -97,7 +122,8 @@ class ScoresheetScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <FormHeader text="Please decide whether you'd like to create new Scoresheet or select on of already existing." />
+        <FormHeader
+          text="Please decide whether you'd like to create new Scoresheet or select on of already existing." />
         <SwitchesGroup
           selectedValue={this.state.mode}
           onValueChange={(mode) => this.setState({ mode })}
@@ -109,9 +135,9 @@ class ScoresheetScreen extends Component {
         <FormHeader text="Scoresheet details" />
         {this.renderScoresheetEditor(this.state.mode)}
         {!!this.state.errorMessage && (
-          <Text style={styles.errorMessage}>{this.state.errorMessage}</Text> 
+          <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
         )}
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={styles.controlBar}>
           <ActionButton
             title="Save"
             image={require('../img/success-icon.png')}
@@ -131,6 +157,10 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     color: 'red'
+  },
+  controlBar: {
+    flex: 1,
+    justifyContent: 'flex-end'
   }
 });
 

@@ -16,8 +16,8 @@ class FirebaseManager {
 		return this.firebaseConnection.database();
 	}
 
-	query(path, key) {
-		return this.db().ref(`${path}/${key}`).once('value').then(snapshot => snapshot.val());
+	query(path) {
+		return new QueryRequest(this.db(), path);
 	}
 
 	add(path, value) {
@@ -30,6 +30,33 @@ class FirebaseManager {
 
 	update(path, key, value) {
 		return this.db().ref(path).update({ [key]: value });
+	}
+
+}
+
+class QueryRequest {
+
+	constructor(db, path) {
+		this.db = db;
+		this.path = path;
+	}
+
+	_query(refPath) {
+		return this.db.ref(refPath).once('value');
+	}
+
+	asList() {
+		return this._query(this.path).then((snapshot) => {
+			const list = [];
+			snapshot.forEach(childSnapshot => { 
+				list.push({ $id: childSnapshot.key, ...childSnapshot.val() }) 
+			});
+			return list;
+		});
+	}
+
+	byId(id) {
+		return this._query(`${this.path}/${id}`).then((snapshot) => snapshot.val());
 	}
 
 }

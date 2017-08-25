@@ -15,13 +15,17 @@ class Select extends Component {
 		this.setState({ listVisible: visible });
 	}
 
+	labelForValue(selectedValue) {
+		return this.props.dataSource.find(({ value }) => value === selectedValue).label;
+	}
+
 	render() {
 		return (
 			<View style={styles.select}>
 				<FormGroup label={this.props.label}>
 					<TouchableOpacity style={styles.button} onPress={() => this.setListVisible(!this.state.listVisible)}>
 						<Text style={!this.props.selectedValue ? styles.prompt : null}>
-							{this.props.selectedValue || this.props.prompt}
+							{this.labelForValue(this.props.selectedValue) || this.props.prompt}
 						</Text>
 					</TouchableOpacity>
 				</FormGroup>

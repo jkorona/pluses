@@ -29,7 +29,7 @@ export default class SettingsScreen extends Component {
 		const googleUser = GoogleSignin.currentUser();
 
 		firebase
-			.query('users', googleUser.id)
+			.query('users').byId(googleUser.id)
 			.then((response) => {
 				let user = response;
 				if (!user) {
@@ -79,6 +79,7 @@ export default class SettingsScreen extends Component {
 					<TouchableOpacity onPress={() =>
 						this.props.navigation.navigate('Scoresheets', { 
 							userId: googleUser.id,
+							scoresheetName: _.get(this.state, 'user.currentScoresheet'),
 							onScoresheetChange: (currentScoresheet) => this.updateUser({ currentScoresheet })
 						})}>
 						<Text>
