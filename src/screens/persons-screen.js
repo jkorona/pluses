@@ -43,7 +43,7 @@ export default class PersonsScreen extends Component {
 	}
 
 	_listenForItems(itemsRef) {
-		itemsRef.on('value', (snap) => {
+		itemsRef.once('value', (snap) => {
 			var items = [];
 			snap.forEach((child) => {
 				items.push({

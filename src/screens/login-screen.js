@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import {
 	StyleSheet,
@@ -43,7 +44,9 @@ export default class LoginScreen extends Component {
 		this.setState({ user });
 		FirebaseManager.instance().authenticate(user.idToken)
 			.then(() => FirebaseManager.instance().query('users').byId(user.id))
-			.then((user) => user ? navigate('Persons') : navigate('Settings', { registration: true, valid: false }))
+			.then((user) => _.get(user, 'currentScoresheet') ?
+				navigate('Persons') :
+				navigate('Settings', { registration: true, valid: false }))
 			.catch(this.whenErrorOcurred);
 	}
 

@@ -14,6 +14,12 @@ import { FormGroup, Select } from '../components';
 import { GoogleSignin } from 'react-native-google-signin';
 import FirebaseManager from '../utils/firebase-manager';
 
+function navButton(label, clickHandler, enabled = true) {
+	return (
+		<Button title={label} disabled={!enabled} onPress={clickHandler} />
+	);
+}
+
 export default class SettingsScreen extends Component {
 
 	state = {
@@ -21,43 +27,43 @@ export default class SettingsScreen extends Component {
 	};
 
 	static navigationOptions = ({ navigation }) => {
-		const params = _.get(navigation, 'state.params', {});
-		let headerRight;
+		const { registration, user } = _.get(navigation, 'state.params', {});
 
-		if (params.registration) {
-			headerRight = (
-				<Button
-					title="Done"
-					disabled={!params.user}
-					onPress={() => {
-						FirebaseManager.instance().save('users', user.id, user)
-							.then(() => navigation.navigate('Persons'));
-					}} />
-			);
+		let headerRight;
+		let headerLeft;
+
+		let logoutButton = navButton('Logout', () => SettingsScreen.signOut(navigation));
+
+		if (registration) {
+			headerRight = navButton('Done', () => navigation.navigate('Persons'), !!user);
+			headerLeft = logoutButton;
 		} else {
-			headerRight = (
-				<Button title="Logout" onPress={() => SettingsScreen.signOut(navigation)} />
-			);
+			headerRight = logoutButton;
 		}
 
 		return {
 			title: 'Settings',
-			headerRight
+			headerRight,
+			headerLeft
 		}
 	};
 
 	static signOut(navigation) {
+
+		function resetNavState() {
+			const resetAction = NavigationActions.reset({
+				index: 0,
+				actions: [
+					NavigationActions.navigate({ routeName: 'Login' })
+				]
+			});
+			navigation.dispatch(resetAction);
+		}
+
 		GoogleSignin.signOut()
 			.then(() => GoogleSignin.revokeAccess())
-			.then(() => {
-				const resetAction = NavigationActions.reset({
-					index: 0,
-					actions: [
-						NavigationActions.navigate({ routeName: 'Login' })
-					]
-				});
-				navigation.dispatch(resetAction);
-			});
+			.then(() => FirebaseManager.instance().logout())
+			.then(() => resetNavState());
 	}
 
 	componentWillMount() {
@@ -69,10 +75,11 @@ export default class SettingsScreen extends Component {
 			.then((response) => {
 				let user = response;
 				if (!user) {
-					user = { 
+					user = {
 						id: googleUser.id,
-						currentScoresheet: '' 
+						currentScoresheet: ''
 					};
+					firebase.save('users', user.id, user);
 				}
 				this.updateUser(user);
 			});

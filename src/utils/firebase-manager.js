@@ -12,6 +12,10 @@ class FirebaseManager {
 		return this.firebaseConnection.auth().signInWithCredential(credential);
 	}
 
+	logout() {
+		return this.firebaseConnection.auth().signOut();
+	}
+
 	db() {
 		return this.firebaseConnection.database();
 	}
