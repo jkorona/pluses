@@ -46,14 +46,31 @@ class QueryRequest {
 	}
 
 	_query(refPath) {
-		return this.db.ref(refPath).once('value');
+		let ref = this.db.ref(refPath);
+
+		if (this.queryParam) {
+			const { paramName, paramValue } = this.queryParam;
+
+			ref = ref.orderByChild(paramName).equalTo(paramValue);
+		}
+
+		return ref.once('value');
+	}
+
+	where(paramName, paramValue) {
+		this.queryParam = {
+			paramName: paramName,
+			paramValue: paramValue
+		};
+
+		return this;
 	}
 
 	asList() {
 		return this._query(this.path).then((snapshot) => {
 			const list = [];
-			snapshot.forEach(childSnapshot => { 
-				list.push({ $id: childSnapshot.key, ...childSnapshot.val() }) 
+			snapshot.forEach(childSnapshot => {
+				list.push({ $id: childSnapshot.key, ...childSnapshot.val() })
 			});
 			return list;
 		});

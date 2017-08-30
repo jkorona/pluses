@@ -6,6 +6,7 @@ import LoginScreen from './src/screens/login-screen';
 import PersonsScreen from './src/screens/persons-screen';
 import SettingsScreen from './src/screens/settings-screen';
 import ScoresheetsScreen from './src/screens/scoresheets-screen';
+import CategoriesScreen from './src/screens/categories-screen';
 
 const routes = {
   Login: {
@@ -19,6 +20,9 @@ const routes = {
   },
   Scoresheets: {
     screen: ScoresheetsScreen
+  },
+  Categories: {
+    screen: CategoriesScreen
   }
 };
 

@@ -8,19 +8,14 @@ import {
 	AlertIOS
 } from 'react-native';
 
-import FirebaseManager from '../utils/firebase-manager';
-
 import ListItem from '../components/list-item';
 import ImageButton from '../components/image-button';
 
-import scoresheetService from '../services/scoresheet-service';
+export default class CategoriesScreen extends Component {
 
-export default class PersonsScreen extends Component {
-
-	static navigationOptions = ({ navigation, screenProps }) => {
+	static navigationOptions = ({ navigation }) => {
 		return {
-			title: 'Persons',
-			headerLeft: null,
+			title: 'Categories',
 			headerRight: (
 				<ImageButton
 					source={require('../img/settings-icon.png')}
@@ -29,8 +24,6 @@ export default class PersonsScreen extends Component {
 			)
 		}
 	};
-
-	db = FirebaseManager.instance();
 
 	constructor(props) {
 		super(props);
@@ -42,20 +35,14 @@ export default class PersonsScreen extends Component {
 	}
 
 	componentDidMount() {
-		const scoresheetId = _.get(this.props, 'navigation.state.params.scoresheetId');
-
-		scoresheetService.loadScoresheet(scoresheetId)
-			.then((scoresheet) => {
-				this.setState({
-					dataSource: this.state.dataSource.cloneWithRows(scoresheet.persons)
-				});
-			});
+		const categories = _.get(this.props, 'navigation.state.params.categories');
+		this.setState({
+			dataSource: this.state.dataSource.cloneWithRows(categories)
+		}); 
 	}
 
 	_renderItem(item) {
-		const onPress = (person) => {
-			this.props.navigation.navigate('Categories', { categories: person.categories })
-		};
+		const onPress = () => { };
 
 		return (
 			<ListItem item={item} onPress={onPress} />

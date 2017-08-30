@@ -35,7 +35,10 @@ export default class SettingsScreen extends Component {
 		let logoutButton = navButton('Logout', () => SettingsScreen.signOut(navigation));
 
 		if (registration) {
-			headerRight = navButton('Done', () => navigation.navigate('Persons'), !!user);
+			headerRight = navButton('Done', () => navigation.navigate('Persons', {
+				scoresheetId: user.currentScoresheet
+			}), !!user);
+
 			headerLeft = logoutButton;
 		} else {
 			headerRight = logoutButton;
