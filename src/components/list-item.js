@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ReactNative from 'react-native';
+import GradeButtons from './grade-buttons';
+
 const { View, TouchableHighlight, Text, Image, StyleSheet } = ReactNative;
 
 class ListItem extends Component {
@@ -8,18 +10,12 @@ class ListItem extends Component {
 			<TouchableHighlight onPress={() => this.props.onPress(this.props.item)}>
 				<View style={styles.li}>
 					<Text style={styles.liText}>{this.props.item.name}</Text>
-					<View style={styles.grades} >
-						<Text>
-							<Image style={styles.icon} source={require('../img/plus-icon.png')} />
-							{' '}
-							{this.props.item.pluses || '0'}
-						</Text>
-						<Text>
-							<Image style={styles.icon} source={require('../img/minus-icon.png')} />
-							{' '}
-							{this.props.item.minuses || '0'}
-						</Text>
-					</View>
+					<GradeButtons 
+						onPress={this.props.onGradeChange}
+						editable={this.props.editable}
+						pluses={this.props.item.pluses}
+						minuses={this.props.item.minuses} >
+					</GradeButtons>
 				</View>
 			</TouchableHighlight>
 		);
@@ -39,11 +35,7 @@ const styles = StyleSheet.create({
 		borderColor: 'transparent',
 
 		borderWidth: 1,
-		padding: 16
-	},
-	icon: {
-		width: 9,
-		height: 9
+		paddingLeft: 16
 	},
 	liText: {
 		color: '#333',

@@ -11,6 +11,8 @@ import {
 import ListItem from '../components/list-item';
 import ImageButton from '../components/image-button';
 
+import FirebaseManager from '../utils/firebase-manager';
+
 export default class CategoriesScreen extends Component {
 
 	static navigationOptions = ({ navigation }) => {
@@ -38,14 +40,34 @@ export default class CategoriesScreen extends Component {
 		const categories = _.get(this.props, 'navigation.state.params.categories');
 		this.setState({
 			dataSource: this.state.dataSource.cloneWithRows(categories)
-		}); 
+		});
 	}
 
 	_renderItem(item) {
-		const onPress = () => { };
+		const onPress = (value) => {
+			AlertIOS.prompt(
+				'Add Grade',
+				'You\'re going to add new grade. Please provide optional comment.',
+				[
+					{ text: 'Cancel' },
+					{
+						text: 'OK', onPress: comment => {
+							const grade = {
+								value,
+								comment,
+								categoryId: item.$id,
+								timestamp: Date.now()
+							}
+							FirebaseManager.instance().add('grades', grade);
+						}
+					},
+				],
+				'plain-text'
+			);
+		};
 
 		return (
-			<ListItem item={item} onPress={onPress} />
+			<ListItem item={item} onGradeChange={onPress} onPress={() => { }} />
 		);
 	}
 

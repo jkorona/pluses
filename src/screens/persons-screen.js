@@ -58,7 +58,7 @@ export default class PersonsScreen extends Component {
 		};
 
 		return (
-			<ListItem item={item} onPress={onPress} />
+			<ListItem editable={false} item={item} onPress={onPress} />
 		);
 	}
 
